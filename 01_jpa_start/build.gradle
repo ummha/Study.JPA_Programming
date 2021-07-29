@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    // https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-core
+    implementation group: 'org.hibernate.orm', name: 'hibernate-core', version: '6.0.0.Alpha8'
+
+    // https://mvnrepository.com/artifact/com.h2database/h2
+    //runtimeOnly 'com.h2database:h2'
+    implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+}
+
+test {
+    useJUnitPlatform()
+}
