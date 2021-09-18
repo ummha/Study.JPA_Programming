@@ -17,7 +17,7 @@ class UserTest {
         user1.setUpdatedAt(LocalDateTime.now());
         System.out.println(">>> user1: " + user1);
 
-        User user2 = new User("testName", "test@gmail.com", LocalDateTime.now(), LocalDateTime.now());
+        User user2 = new User(null, "testName", "test@gmail.com", LocalDateTime.now(), LocalDateTime.now());
         System.out.println(">>> user2: " + user2);
         User user3 = new User("testName", "test@gmail.com");
         System.out.println(">>> user3: " + user3);

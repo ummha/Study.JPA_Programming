@@ -1,7 +1,17 @@
 spring:
   h2:
     console:
-      enabled: true
+      enabled: true # h2 console을 사용하는지 여부 설정
+  jpa:
+    defer-datasource-initialization: true # data.sql을 시스템이 올라온 후 사용할지 여부 설정
+    show-sql: true  # jpa 쿼리를 볼 것인지 여부 설정
+    properties:
+      hibernate:
+        format_sql: true  # jpa 쿼리를 정렬된 상태로 볼 수 있는 설정
+
+#logging:
+#  level:
+#    org.hibernate.type: trace # 파라미터 값이 어떻게 매핑되는지 확인하는 설정
 
 server:
   port: 9090

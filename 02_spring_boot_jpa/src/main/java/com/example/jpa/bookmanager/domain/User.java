@@ -2,6 +2,10 @@ package com.example.jpa.bookmanager.domain;
 
 import lombok.*;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 /**
@@ -22,7 +26,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Builder
+@Entity // 자바객체 선언 어노테이션
 public class User {
+    @Id // PK 설정
+    @GeneratedValue // 자동 카운트
+    private Long id;
     @NonNull
     private String name;
     @NonNull
