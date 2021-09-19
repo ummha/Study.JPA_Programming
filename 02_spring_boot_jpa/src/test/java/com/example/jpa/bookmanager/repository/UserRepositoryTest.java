@@ -72,6 +72,16 @@ class UserRepositoryTest {
         userRepository.findAll().forEach(System.out::println);
 
         /**
+         * update == save
+         * Look -> SimpleJpaRepository
+         */
+        System.out.println(">>> save() : update");
+        User u = userRepository.findById(1L).orElseThrow(RuntimeException::new);
+        u.setName("MINSEO");
+        userRepository.save(u);
+        userRepository.findAll().forEach(System.out::println);
+
+        /**
          * delete == delete
          * delete() <- must not be null
          * delete(), deleteById() <- delete를 하기 전에 해당 자료가 존재하는지 여부를 위한 select 쿼리가 돌아감
