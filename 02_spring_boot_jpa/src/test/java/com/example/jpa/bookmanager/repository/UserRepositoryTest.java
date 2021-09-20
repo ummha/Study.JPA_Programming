@@ -9,6 +9,7 @@ import org.springframework.data.domain.*;
 import org.springframework.data.domain.Sort.Direction;
 
 import javax.xml.bind.SchemaOutputResolver;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -201,5 +202,72 @@ class UserRepositoryTest {
     void qbeTest4() {
         Example<User> example = Example.of(new User("minseo", "minseo@gmail.com"));
         userRepository.findAll(example).forEach(System.out::println);
+    }
+
+    @Test
+    void selectQueryMethodTest1(){
+        // 다양한 방식의 select 절
+        System.out.println(userRepository.findByName("John"));
+        System.out.println("findByEmail: " + userRepository.findByEmail("minseo@gmail.com"));
+        System.out.println("getByEmail: " + userRepository.getByEmail("minseo@gmail.com"));
+        System.out.println("readByEmail: " + userRepository.readByEmail("minseo@gmail.com"));
+        System.out.println("queryByEmail: " + userRepository.queryByEmail("minseo@gmail.com"));
+        System.out.println("searchByEmail: " + userRepository.searchByEmail("minseo@gmail.com"));
+        System.out.println("streamByEmail: " + userRepository.streamByEmail("minseo@gmail.com"));
+        System.out.println("findUserByEmail: " + userRepository.findUserByEmail("minseo@gmail.com"));
+        System.out.println("findSomethingByEmail: " + userRepository.findSomethingByEmail("minseo@gmail.com"));
+    }
+    @Test
+    void selectQueryMethodTest2(){
+        // 하나의 조건절
+        System.out.println("findFirst1ByName: " + userRepository.findFirst1ByName("John"));
+        System.out.println("findTop2ByName: " + userRepository.findTop2ByName("John"));
+        System.out.println("findLast1ByName: " + userRepository.findLast1ByName("John"));
+    }
+
+    @Test
+    void selectQueryMethodTest3(){
+        // 다수의 AND 조건절
+        System.out.println("findByEmailAndName: " + userRepository.findByEmailAndName("minseo@gmail.com", "minseo"));
+        // 다수의 OR 조건절
+        System.out.println("findByEmailOrName: " + userRepository.findByEmailOrName("minseo@gmail.com", "John"));
+    }
+
+    @Test
+    void afterBeforeTest(){
+        System.out.println("findByCreatedAtAfter: " + userRepository.findByCreatedAtAfter(LocalDateTime.now().minusDays(1L)));
+        // 다음과 같은 조건절 작성됨 : 비교 연산자 사용
+        // WHERE createdAt > ?
+
+        System.out.println("findByIdAfter: " + userRepository.findByIdAfter(3L));
+        // WHERE id > ?
+        System.out.println("findByIdBefore: " + userRepository.findByIdBefore(3L));
+        // WHERE id < ?
+    }
+    @Test
+    void thanTest(){
+        /**
+         * after/before는 equal(=)을 포함한 비교 연산자가 적용되지 않는다.
+         * 하지만 than 구문은 GreaterThanEqual(>=) 방식으로 작성 가능하다.
+         * 즉, 가독성은 after,before가 더 좋겠지만 than 구문이 더 범용성이 넓다고 볼 수 있다.
+         */
+
+        System.out.println("findByCreatedAtGreaterThan: " + userRepository.findByCreatedAtGreaterThan(LocalDateTime.now().minusDays(1L)));
+        // WHERE createdAt > ?
+
+        System.out.println("findByIdGreaterThanEqual: " + userRepository.findByIdGreaterThanEqual(3L));
+        // WHERE id >= ?
+        System.out.println("findByIdLessThanEqual: " + userRepository.findByIdLessThanEqual(3L));
+        // WHERE id <= ?
+    }
+
+    @Test
+    void betweenTest() {
+        // between 구문
+        System.out.println("findByCreatedAtBetween: " + userRepository.findByCreatedAtBetween(LocalDateTime.now().minusDays(1L), LocalDateTime.now().plusDays(1L)));
+        
+        // 아래 두 개는 같은 결과
+        System.out.println("findByIdBetween: " + userRepository.findByIdBetween(1L, 3L));
+        System.out.println("findByIdGreaterThanEqualAndIdLessThanEqual: " + userRepository.findByIdGreaterThanEqualAndIdLessThanEqual(1L, 3L));
     }
 }
