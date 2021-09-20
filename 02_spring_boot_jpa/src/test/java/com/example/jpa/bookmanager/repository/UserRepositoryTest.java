@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.*;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 
-import javax.xml.bind.SchemaOutputResolver;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -182,6 +182,7 @@ class UserRepositoryTest {
         Example<User> example = Example.of(new User("mi", ".com"), matcher);
         userRepository.findAll(example).forEach(System.out::println);
     }
+
     @Test
     void qbeTest2() {
         ExampleMatcher matcher = ExampleMatcher.matching()
@@ -190,6 +191,7 @@ class UserRepositoryTest {
         Example<User> example = Example.of(new User("", "gmail"), matcher);
         userRepository.findAll(example).forEach(System.out::println);
     }
+
     @Test
     void qbeTest3() {
         User user = new User();
@@ -198,6 +200,7 @@ class UserRepositoryTest {
         Example<User> example = Example.of(user, matcher);
         userRepository.findAll(example).forEach(System.out::println);
     }
+
     @Test
     void qbeTest4() {
         Example<User> example = Example.of(new User("minseo", "minseo@gmail.com"));
@@ -205,7 +208,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    void selectQueryMethodTest1(){
+    void selectQueryMethodTest1() {
         // 다양한 방식의 select 절
         System.out.println(userRepository.findByName("John"));
         System.out.println("findByEmail: " + userRepository.findByEmail("minseo@gmail.com"));
@@ -217,8 +220,9 @@ class UserRepositoryTest {
         System.out.println("findUserByEmail: " + userRepository.findUserByEmail("minseo@gmail.com"));
         System.out.println("findSomethingByEmail: " + userRepository.findSomethingByEmail("minseo@gmail.com"));
     }
+
     @Test
-    void selectQueryMethodTest2(){
+    void selectQueryMethodTest2() {
         // 하나의 조건절
         System.out.println("findFirst1ByName: " + userRepository.findFirst1ByName("John"));
         System.out.println("findTop2ByName: " + userRepository.findTop2ByName("John"));
@@ -226,7 +230,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    void selectQueryMethodTest3(){
+    void selectQueryMethodTest3() {
         // 다수의 AND 조건절
         System.out.println("findByEmailAndName: " + userRepository.findByEmailAndName("minseo@gmail.com", "minseo"));
         // 다수의 OR 조건절
@@ -234,7 +238,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    void afterBeforeTest(){
+    void afterBeforeTest() {
         System.out.println("findByCreatedAtAfter: " + userRepository.findByCreatedAtAfter(LocalDateTime.now().minusDays(1L)));
         // 다음과 같은 조건절 작성됨 : 비교 연산자 사용
         // WHERE createdAt > ?
@@ -244,8 +248,9 @@ class UserRepositoryTest {
         System.out.println("findByIdBefore: " + userRepository.findByIdBefore(3L));
         // WHERE id < ?
     }
+
     @Test
-    void thanTest(){
+    void thanTest() {
         /**
          * after/before는 equal(=)을 포함한 비교 연산자가 적용되지 않는다.
          * 하지만 than 구문은 GreaterThanEqual(>=) 방식으로 작성 가능하다.
@@ -265,9 +270,79 @@ class UserRepositoryTest {
     void betweenTest() {
         // between 구문
         System.out.println("findByCreatedAtBetween: " + userRepository.findByCreatedAtBetween(LocalDateTime.now().minusDays(1L), LocalDateTime.now().plusDays(1L)));
-        
+
         // 아래 두 개는 같은 결과
         System.out.println("findByIdBetween: " + userRepository.findByIdBetween(1L, 3L));
         System.out.println("findByIdGreaterThanEqualAndIdLessThanEqual: " + userRepository.findByIdGreaterThanEqualAndIdLessThanEqual(1L, 3L));
+    }
+
+    @Test
+    void isNotTest() {
+        System.out.println("findByIdIsNotNull: " + userRepository.findByIdIsNotNull());
+        // WHERE id IS NOT NULL
+
+        // 오류
+        // System.out.println("findByIdIsNotEmpty: " + userRepository.findByIdIsNotEmpty());
+        // 자바 문자열 not empty는 일반적으로 null과 빈문자열("")의 여부를 확인한다.
+        // 하지만 해당 NotEmpty 구문은 Collection 타입의 NotEmpty를 의미한다.
+        // 이후 relational에서 사용하게 되지만, 잘 사용되지 않음
+
+        // relational과 isNotEmpty 사용예
+//        System.out.println("findByAddressIsNotEmpty: " + userRepository.findByAddressIsNotEmpty());
+    }
+
+    @Test
+    void inTest() {
+        System.out.println("findByNameIn: " + userRepository.findByNameIn(Lists.newArrayList("minseo", "John")));
+        // WHERE name IN (?, ?)
+    }
+
+    @Test
+    void likeTest() {
+        System.out.println("findByNameStartingWith: " + userRepository.findByNameStartingWith("Jo"));
+        System.out.println("findByNameEndingWith: " + userRepository.findByNameEndingWith("seo"));
+
+        // 아래 두 개의 결과 동일
+        System.out.println("findByNameContains: " + userRepository.findByNameContains("ns"));
+        System.out.println("findByNameLike: " + userRepository.findByNameLike("%ns%"));
+    }
+
+    @Test
+    void isTest() {
+        // 결과 모두 동일
+        System.out.println("findByName: " + userRepository.findByName("minseo"));
+        System.out.println("findUserByNameIs: " + userRepository.findUserByNameIs("minseo"));
+        System.out.println("findUserByName: " + userRepository.findUserByName("minseo"));
+        System.out.println("findByNameEquals: " + userRepository.findByNameEquals("minseo"));
+    }
+
+    @Test
+    void pagingAndSortingTest() {
+        System.out.println("findTop1ByName: " + userRepository.findTop1ByName("John"));
+
+        // 마지막 이름이 John인 데이터를 가져오려고 했지만 가져와지지 않음
+        System.out.println("findLast1ByName: " + userRepository.findLast1ByName("John"));
+
+        /**
+         * order by
+         */
+        // 역순해서 가져옴 TopN -> N: default=1
+        System.out.println("findTop1ByNameOrderByIdDesc: " + userRepository.findTop1ByNameOrderByIdDesc("John"));
+        System.out.println("findTopByNameOrderByIdDesc: " + userRepository.findTopByNameOrderByIdDesc("John"));
+
+        // 메소드 네이밍으로 정렬을 할 경우 Order by가 길어질수록 가독성이 떨이지며, 메소드 자유도가 떨어진다.
+        System.out.println("findFirstByNameOrderByIdDescEmailAsc: " + userRepository.findFirstByNameOrderByIdDescEmailAsc("John"));
+
+        System.out.println("findFirstByName (with sort param): " + userRepository.findFirstByName("John", Sort.by(Order.desc("id"), Order.asc("email"))));
+
+        // 페이징
+        System.out.println("findByName (with paging): " + userRepository.findByName(
+                "John"
+                , PageRequest.of(0, 1, Sort.by(Order.desc("id")))
+        ).getContent());
+        System.out.println("findByName (with paging): " + userRepository.findByName(
+                "John"
+                , PageRequest.of(1, 1, Sort.by(Order.desc("id")))
+        ).getContent());
     }
 }

@@ -1,15 +1,25 @@
 package com.example.jpa.bookmanager.repository;
 
 import com.example.jpa.bookmanager.domain.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     // Query return types = https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#appendix.query.return.types
     // Query subject keywords = https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#appendix.query.method.subject
     List<User> findByName(String name);
+
+    Set<User> findUserByNameIs(String name);
+
+    Set<User> findUserByName(String name);
+
+    Set<User> findByNameEquals(String name);
 
     User findByEmail(String email);
 
@@ -54,4 +64,32 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByIdBetween(Long start, Long end);
 
     List<User> findByIdGreaterThanEqualAndIdLessThanEqual(Long start, Long end);
+
+    List<User> findByIdIsNotNull();
+
+//     List<User> findByIdIsNotEmpty();
+
+//    List<User> findByAddressIsNotEmpty();
+
+    List<User> findByNameIn(List<String> names);
+
+    List<User> findByNameStartingWith(String name);
+
+    List<User> findByNameEndingWith(String name);
+
+    List<User> findByNameContains(String name);
+
+    List<User> findByNameLike(String name);
+
+    List<User> findTop1ByName(String name);
+
+    List<User> findTop1ByNameOrderByIdDesc(String name);
+
+    List<User> findTopByNameOrderByIdDesc(String name); // Asc : 정순, Desc : 역순
+
+    List<User> findFirstByNameOrderByIdDescEmailAsc(String name);
+
+    List<User> findFirstByName(String name, Sort sort);
+
+    Page<User> findByName(String name, Pageable pageable);
 }
