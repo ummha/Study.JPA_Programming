@@ -10,6 +10,7 @@ import org.springframework.data.domain.*;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,8 @@ import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatc
 class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
+    @Resource
+    private UserHistoryRepository userHistoryRepository;
 
     @Test
     void crud() {
@@ -371,5 +374,54 @@ class UserRepositoryTest {
         userRepository.findAll().forEach(System.out::println);
 
         System.out.println(userRepository.findRowRecord().get("gender"));
+    }
+
+    @Test
+    void listenerTest() {
+        User user = new User();
+        user.setEmail("minseo2@gmail.com");
+        user.setName("minseo");
+        userRepository.save(user);
+
+        User user2 = userRepository.findById(1L).orElseThrow(RuntimeException::new);
+        user2.setName("MMMMM");
+        userRepository.save(user2);
+
+        userRepository.deleteById(4L);
+    }
+
+    @Test
+    void prePersistTest() {
+        User user = new User();
+        user.setEmail("minseo2@gmail.com");
+        user.setName("MINSEO");
+//        user.setCreatedAt(LocalDateTime.now());
+//        user.setUpdatedAt(LocalDateTime.now());
+
+        userRepository.save(user);
+
+        System.out.println(userRepository.findByEmail("minseo2@gmail.com"));
+    }
+
+    @Test
+    void preUpdateTest() {
+        User user2 = userRepository.findById(1L).orElseThrow(RuntimeException::new);
+        System.out.println(user2);
+        user2.setName("MMMMM");
+        userRepository.save(user2);
+        System.out.println("to-be: "+ userRepository.findAll().get(0));
+    }
+
+    @Test
+    void userHistoryTest() {
+        User user = new User();
+        user.setEmail("minseoNew@gmail.com");
+        user.setName("minseoNEW");
+        userRepository.save(user);
+
+        user.setName("minseoNewNew");
+        userRepository.save(user);
+
+        userHistoryRepository.findAll().forEach(System.out::println);
     }
 }

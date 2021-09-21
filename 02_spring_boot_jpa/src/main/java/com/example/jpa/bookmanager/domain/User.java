@@ -1,6 +1,9 @@
 package com.example.jpa.bookmanager.domain;
 
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -26,7 +29,8 @@ import java.util.List;
 @Builder
 @Entity // 자바객체 선언 어노테이션
 @Table(name = "user", indexes = {@Index(columnList = "name")}, uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
-public class User {
+@EntityListeners(value = {AuditingEntityListener.class, UserEntityListener.class})
+public class User implements Auditable {
     @Id // PK 설정
     @GeneratedValue // 자동 카운트
     private Long id;
@@ -36,17 +40,20 @@ public class User {
 
     @NonNull
     private String email;
-    
+
     // updatable : 수정시 반영할지에 대한 여부(false=반영안함)
     // insertable : 삽입시 반영할지에 대한 여부(false=반영안함)
     @Column(updatable = false)
+    @CreatedDate
     private LocalDateTime createdAt;
 
     @Column
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
     @Column
-    @Enumerated(value = EnumType.STRING) // Enum 객체는 기본적으로 DB에 ordinary(index 0,1,2...) 값이 들어가게 된다. 그러니 꼭 EnumType.STRING을 정의해주자
+    @Enumerated(value = EnumType.STRING)
+    // Enum 객체는 기본적으로 DB에 ordinary(index 0,1,2...) 값이 들어가게 된다. 그러니 꼭 EnumType.STRING을 정의해주자
     private Gender gender;
 
     // @Transient : 영속성 처리에서 제외하는 어노테이션, DB데이터 반영X, 해당객체와 생명주기가 동일
@@ -55,4 +62,42 @@ public class User {
 
 //    @OneToMany(fetch = FetchType.EAGER)
 //    private List<Address> address;
+
+//    @PrePersist // 삽입 전
+//    public void prePersist() {
+//        System.out.println(">>> CALL prePersist()");
+//        this.createdAt = LocalDateTime.now();
+//        this.updatedAt = LocalDateTime.now();
+//    }
+
+//    @PostPersist // 삽입 후
+//    public void postPersist() {
+//        System.out.println(">>> CALL postPersist()");
+//    }
+
+//    @PreUpdate // 수정 전
+//    public void preUpdate() {
+//        System.out.println(">>> CALL preUpdate()");
+//        this.updatedAt = LocalDateTime.now();
+//    }
+
+//    @PostUpdate // 수정 후
+//    public void postUpdate() {
+//        System.out.println(">>> CALL postUpdate()");
+//    }
+//
+//    @PreRemove // 삭제 전
+//    public void preRemove() {
+//        System.out.println(">>> CALL preRemove()");
+//    }
+//
+//    @PostRemove // 삭제 후
+//    public void postRemove() {
+//        System.out.println(">>> CALL postRemove()");
+//    }
+//
+//    @PostLoad // 조회가 일어난 직후
+//    public void postLoad() {
+//        System.out.println(">>> CALL postLoad()");
+//    }
 }
