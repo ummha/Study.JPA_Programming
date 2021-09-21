@@ -1,11 +1,16 @@
-package com.example.jpa.bookmanager.domain;
+package com.example.jpa.bookmanager.domain.listener;
 
+import com.example.jpa.bookmanager.domain.User;
+import com.example.jpa.bookmanager.domain.UserHistory;
 import com.example.jpa.bookmanager.repository.UserHistoryRepository;
 import com.example.jpa.bookmanager.support.BeanUtils;
+import org.hibernate.sql.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import javax.persistence.PostPersist;
+import javax.persistence.PostUpdate;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
@@ -22,15 +27,13 @@ public class UserEntityListener {
 
     @PrePersist
     @PreUpdate
-    public void prePersistAndPreUpdate(Object o) {
+    public void postUpdate(Object o) {
         UserHistoryRepository userHistoryRepository = BeanUtils.getBean(UserHistoryRepository.class);
-
         User user = (User) o;
         UserHistory userHistory = new UserHistory();
         userHistory.setUserId(user.getId());
         userHistory.setName(user.getName());
         userHistory.setEmail(user.getEmail());
-
         userHistoryRepository.save(userHistory);
     }
 }

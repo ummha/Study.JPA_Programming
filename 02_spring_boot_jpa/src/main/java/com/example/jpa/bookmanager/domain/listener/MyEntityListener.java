@@ -1,4 +1,4 @@
-package com.example.jpa.bookmanager.domain;
+package com.example.jpa.bookmanager.domain.listener;
 
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;

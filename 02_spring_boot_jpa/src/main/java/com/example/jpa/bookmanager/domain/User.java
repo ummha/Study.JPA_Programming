@@ -1,13 +1,19 @@
 package com.example.jpa.bookmanager.domain;
 
+import com.example.jpa.bookmanager.domain.listener.Auditable;
+import com.example.jpa.bookmanager.domain.listener.UserEntityListener;
+import com.example.jpa.bookmanager.repository.UserHistoryRepository;
+import com.example.jpa.bookmanager.support.BeanUtils;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.jpa.repository.JpaRepository;
 
+import javax.annotation.Resource;
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * @Getter
@@ -29,8 +35,10 @@ import java.util.List;
 @Builder
 @Entity // 자바객체 선언 어노테이션
 @Table(name = "user", indexes = {@Index(columnList = "name")}, uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
-@EntityListeners(value = {AuditingEntityListener.class, UserEntityListener.class})
-public class User implements Auditable {
+@EntityListeners(value = UserEntityListener.class)
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+public class User extends BaseEntity implements Auditable {
     @Id // PK 설정
     @GeneratedValue // 자동 카운트
     private Long id;
@@ -43,13 +51,13 @@ public class User implements Auditable {
 
     // updatable : 수정시 반영할지에 대한 여부(false=반영안함)
     // insertable : 삽입시 반영할지에 대한 여부(false=반영안함)
-    @Column(updatable = false)
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @Column
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
+//    @Column(updatable = false)
+//    @CreatedDate
+//    private LocalDateTime createdAt;
+//
+//    @Column
+//    @LastModifiedDate
+//    private LocalDateTime updatedAt;
 
     @Column
     @Enumerated(value = EnumType.STRING)
@@ -80,7 +88,7 @@ public class User implements Auditable {
 //        System.out.println(">>> CALL preUpdate()");
 //        this.updatedAt = LocalDateTime.now();
 //    }
-
+//
 //    @PostUpdate // 수정 후
 //    public void postUpdate() {
 //        System.out.println(">>> CALL postUpdate()");
