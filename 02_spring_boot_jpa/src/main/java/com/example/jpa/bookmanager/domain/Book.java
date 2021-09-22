@@ -17,17 +17,21 @@ import java.time.LocalDateTime;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @SequenceGenerator(
-        name="BOOK_SEQ_GEN", //시퀀스 제너레이터 이름
-        sequenceName="BOOK_SEQ", //시퀀스 이름
-        initialValue=1, //시작값
-        allocationSize=1 //메모리를 통해 할당할 범위 사이즈
+        name = "BOOK_SEQ_GEN", //시퀀스 제너레이터 이름
+        sequenceName = "BOOK_SEQ", //시퀀스 이름
+        initialValue = 1, //시작값
+        allocationSize = 1 //메모리를 통해 할당할 범위 사이즈
 )
-public class Book extends BaseEntity implements Auditable {
+public class Book extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "BOOK_SEQ_GEN")
     private Long id;
 
     private String name;
 
-    private String author;
+    private String category;
+
+    private Long authorId;
+
+    private Long publisherId;
 }

@@ -1,5 +1,6 @@
 package com.example.jpa.bookmanager.domain;
 
+import com.example.jpa.bookmanager.domain.listener.Auditable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @MappedSuperclass // 해당 클래스의 필드를 상속받는 Entity의 필드로 포함시켜 주겠다는 의미
 @EntityListeners(value = AuditingEntityListener.class)
-public class BaseEntity {
+public class BaseEntity implements Auditable {
     @CreatedDate
     private LocalDateTime createdAt;
     @LastModifiedDate

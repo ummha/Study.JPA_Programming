@@ -38,7 +38,7 @@ import java.time.LocalDateTime;
 @EntityListeners(value = UserEntityListener.class)
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class User extends BaseEntity implements Auditable {
+public class User extends BaseEntity {
     @Id // PK 설정
     @GeneratedValue // 자동 카운트
     private Long id;
