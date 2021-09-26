@@ -16,15 +16,9 @@ import java.time.LocalDateTime;
 @Table
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-@SequenceGenerator(
-        name = "BOOK_SEQ_GEN", //시퀀스 제너레이터 이름
-        sequenceName = "BOOK_SEQ", //시퀀스 이름
-        initialValue = 1, //시작값
-        allocationSize = 1 //메모리를 통해 할당할 범위 사이즈
-)
 public class Book extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "BOOK_SEQ_GEN")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
@@ -34,4 +28,10 @@ public class Book extends BaseEntity {
     private Long authorId;
 
     private Long publisherId;
+
+    // mappedBy 속성 = "book" : book 테이블에 book_review_info_id가 사라짐, 즉, 이 속성은 해당 테이블이 연관키를 갖지 않게 하는 것
+    // 테스트 코드 실행시 toString 메소드 순환참조 오류 발생(StackOverflowError) : 그렇기 때문에 relational은 특별한 상황이 아니면 단방향으로 처리한다. 또는 toString 메소드를 제외하는 작업이 필요하다.
+    @OneToOne(mappedBy = "book")
+    @ToString.Exclude
+    private BookReviewInfo bookReviewInfo;
 }

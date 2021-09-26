@@ -40,7 +40,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 public class User extends BaseEntity {
     @Id // PK 설정
-    @GeneratedValue // 자동 카운트
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // 자동 카운트
     private Long id;
 
     @NonNull

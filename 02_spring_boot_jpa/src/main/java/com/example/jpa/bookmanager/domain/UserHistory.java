@@ -15,15 +15,9 @@ import java.time.LocalDateTime;
 @Entity
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-@SequenceGenerator(
-        name="USER_HISTORY_SEQ_GEN", //시퀀스 제너레이터 이름
-        sequenceName="USER_HISTORY_SEQ", //시퀀스 이름
-        initialValue=1, //시작값
-        allocationSize=1 //메모리를 통해 할당할 범위 사이즈
-)
 public class UserHistory extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "USER_HISTORY_SEQ_GEN")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long userId;
