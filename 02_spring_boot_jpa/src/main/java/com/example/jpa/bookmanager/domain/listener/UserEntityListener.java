@@ -25,15 +25,16 @@ public class UserEntityListener {
      * 참고: bookmanager.support.BeanUtils.java
      */
 
-    @PrePersist
-    @PreUpdate
+    @PostPersist
+    @PostUpdate
     public void postUpdate(Object o) {
         UserHistoryRepository userHistoryRepository = BeanUtils.getBean(UserHistoryRepository.class);
         User user = (User) o;
         UserHistory userHistory = new UserHistory();
-        userHistory.setUserId(user.getId());
+//        userHistory.setUserId(user.getId());
         userHistory.setName(user.getName());
         userHistory.setEmail(user.getEmail());
+        userHistory.setUser(user);
         userHistoryRepository.save(userHistory);
     }
 }

@@ -14,6 +14,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import javax.annotation.Resource;
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Getter
@@ -49,16 +51,6 @@ public class User extends BaseEntity {
     @NonNull
     private String email;
 
-    // updatable : 수정시 반영할지에 대한 여부(false=반영안함)
-    // insertable : 삽입시 반영할지에 대한 여부(false=반영안함)
-//    @Column(updatable = false)
-//    @CreatedDate
-//    private LocalDateTime createdAt;
-//
-//    @Column
-//    @LastModifiedDate
-//    private LocalDateTime updatedAt;
-
     @Column
     @Enumerated(value = EnumType.STRING)
     // Enum 객체는 기본적으로 DB에 ordinary(index 0,1,2...) 값이 들어가게 된다. 그러니 꼭 EnumType.STRING을 정의해주자
@@ -68,44 +60,14 @@ public class User extends BaseEntity {
     @Transient
     private String testData;
 
-//    @OneToMany(fetch = FetchType.EAGER)
-//    private List<Address> address;
+    // 1대N
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @ToString.Exclude
+    private List<UserHistory> userHistories = new ArrayList<>();
 
-//    @PrePersist // 삽입 전
-//    public void prePersist() {
-//        System.out.println(">>> CALL prePersist()");
-//        this.createdAt = LocalDateTime.now();
-//        this.updatedAt = LocalDateTime.now();
-//    }
-
-//    @PostPersist // 삽입 후
-//    public void postPersist() {
-//        System.out.println(">>> CALL postPersist()");
-//    }
-
-//    @PreUpdate // 수정 전
-//    public void preUpdate() {
-//        System.out.println(">>> CALL preUpdate()");
-//        this.updatedAt = LocalDateTime.now();
-//    }
-//
-//    @PostUpdate // 수정 후
-//    public void postUpdate() {
-//        System.out.println(">>> CALL postUpdate()");
-//    }
-//
-//    @PreRemove // 삭제 전
-//    public void preRemove() {
-//        System.out.println(">>> CALL preRemove()");
-//    }
-//
-//    @PostRemove // 삭제 후
-//    public void postRemove() {
-//        System.out.println(">>> CALL postRemove()");
-//    }
-//
-//    @PostLoad // 조회가 일어난 직후
-//    public void postLoad() {
-//        System.out.println(">>> CALL postLoad()");
-//    }
+    @OneToMany
+    @JoinColumn(name = "user_id")
+    @ToString.Exclude
+    private List<Review> reviews = new ArrayList<>();
 }

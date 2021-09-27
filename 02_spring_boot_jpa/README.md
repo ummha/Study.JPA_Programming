@@ -39,6 +39,8 @@
     - [응용](#응용)
 - [관계 Relational](#관계-relational)
   - [1대1 관계](#1대1-관계)
+  - [1대N 관계](#1대n-관계)
+  - [N대1 관계](#n대1-관계)
 
 # Spring Data JPA
 
@@ -562,5 +564,42 @@ public class Book {
   @OneToOne(mappedBy = "book")
   @ToString.Exclude
   private BookReviewInfo bookReviewInfo;
+}
+```
+
+## 1대N 관계
+
+1대N 관계를 매핑할때는 `@OneToMany` 어노테이션을 사용한다.
+
+`@OneToMany`
+
+```java
+
+@Entity
+...
+public class User {
+  ...
+  @OneToMany
+  @JoinColumn(name = "user_id") // 조인할 컬럼을 명시
+  @ToString.Exclude // 순환참조 오류 방지
+  private List<UserHistory> userHistories = new ArrayList<>(); // 초기화선언을 통해 null 방지
+}
+```
+
+## N대1 관계
+
+N대1 관게를 매핑할때는 `@ManyToOne` 어노테이션을 사용한다.  
+N대1과 1대N은 어느 엔터티에서 연관관계 조회가 필요한지 정의하여 단방향 혹은 양방향으로 조인 매핑 시키야 한다.
+
+`@ManyToOne`
+
+```java
+@Entity
+...
+public class UserHistory {
+    ...
+    @ManyToOne
+    //@ToString.Exclude
+    private User user;
 }
 ```
