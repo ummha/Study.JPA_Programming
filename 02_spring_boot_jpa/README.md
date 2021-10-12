@@ -41,6 +41,7 @@
   - [1대1 관계](#1대1-관계)
   - [1대N 관계](#1대n-관계)
   - [N대1 관계](#n대1-관계)
+  - [N대N 관계](#n대n-관계)
 
 # Spring Data JPA
 
@@ -601,5 +602,71 @@ public class UserHistory {
     @ManyToOne
     //@ToString.Exclude
     private User user;
+}
+```
+
+## N대N 관계
+
+1대N 이거나 N대1 일 때 조인 컬럼을 통해서 중간 테이블을 제거하고 직접 참조를 할 수 있도록 구성했지만,  
+N대N 관계에서는 중간 테이블 없이 직접 참조 구성이 불가능하다. 그래서 N대N 관계가 형성될 테이블들의 아이디가 매핑되어 있는 중간 테이블이 생성된다.
+
+
+```java
+@Entity
+...
+public class Author extends BaseEntity {
+    ...
+    @ManyToMany
+    private List<Book> books = new ArrayList<>();
+}
+```
+
+하지만 중간테이블을 스키마로 설정해서 ManyToMany 를 피해가는 방식도 존재한다.  
+예를 들어서 사용자(User)와 상품(Product) 관계가 N대N 관계일때, 앞서 얘기했드시 두 스키마 사이에 중간 테이블이 생성되게 된다.  
+하지만 여기서 중간 테이블을 주문(Order) 스키마를 설계하게되면 N대N 관계를  
+사용자(User) <-1대N- 주문(Order) -N대1-> 상품(Product) 관계를 맺을 수 있다.
+
+본 예제에서는 책(Book)과 저자(Author)의 중간 스키마 정의가 애매하므로 BookAndAuthor로 정의하였다.
+- [BookAndAuthor.java](./src/main/java/com/example/jpa/bookmanager/domain/BookAndAuthor.java)
+- [Book.java](./src/main/java/com/example/jpa/bookmanager/domain/Book.java)
+- [Author.java](./src/main/java/com/example/jpa/bookmanager/domain/Author.java)
+```java
+@Entity
+@NoArgsConstructor
+@Data
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+public class BookAndAuthor extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    private Book book;
+
+    @ManyToOne
+    private Author author;
+}
+
+@Entity
+...
+public class Author extends BaseEntity {
+    ...
+    @OneToMany
+    @JoinColumn(name = "author_id")
+    @ToString.Exclude
+    private List<BookAndAuthor> bookAndAuthors = new ArrayList<>();
+    ...
+}
+
+@Entity
+...
+public class Book extends BaseEntity {
+    ...
+    @OneToMany
+    @JoinColumn(name = "book_id")
+    @ToString.Exclude
+    private List<Review> reviews = new ArrayList<>();
+    ...
 }
 ```
