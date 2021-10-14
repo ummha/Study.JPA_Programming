@@ -8,6 +8,27 @@ spring:
     properties:
       hibernate:
         format_sql: true  # jpa 쿼리를 정렬된 상태로 볼 수 있는 설정
+    # mysql 기본 동작을 위한 옵션 추가함.
+    generate-ddl: true  # Entity 들을 자동으로 생성하는 옵션 (기본값: false)
+    hibernate:
+      ddl-auto: create-drop # create-drop, create, update, validate, none(ddl-auto를 실행하지 않는 옵션)
+    # Q. generate-ddl vs ddl-auto : 동시 선언시 ddl-auto 가 우선권을 가지고 generate-auto 는 무시됨.
+    # Q. 차이점 : generate-ddl 은 jpa 구현체와 상관없이 사용할 수 있는 범용적인 옵션이다.
+    #           ddl-auto 는 hibernate 에서 제공하는 좀 더 세밀한 옵션이다.
+    # Q. generate-ddl 의 기본값이 false 인데 H2 를 사용했을 때 왜 동작했나?
+    #     : Embedded 디비(예. H2) 를 사용시 ddl-auto 가 기본값으로 create-drop 잇 설정됨.
+  datasource:
+    url: jdbc:mysql://localhost:3306/book_manager
+    username: rhie
+    password: 1234
+  # initialization-mode -> deprecated - use instead -> spring.sql.init.mode:
+  sql:
+    init:
+      mode: always # always, never
+      # data.sql 과 schema.sql 은 기본적으로 resources 하위로 설정됨. 나는 정적자원을 구분하기 위해 resources/db 하위로 재설정함
+      schema-locations: classpath*:db/schema.sql
+      data-locations: classpath*:db/data.sql
+
 
 #logging:
 #  level:

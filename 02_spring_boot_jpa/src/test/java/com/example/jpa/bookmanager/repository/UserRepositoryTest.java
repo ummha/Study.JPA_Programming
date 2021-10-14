@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.*;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ import java.util.Optional;
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.*;
 
 @SpringBootTest // Spring Context를 로딩해서 활용하겠다는 어노테이션
+@Transactional  // 전체 테스트 수행시 앞전에 테스트 했던 데이터가 변경됨에 따라 오류가 발생했던 것을 일시방지함.
 class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
@@ -92,8 +94,11 @@ class UserRepositoryTest {
          * delete() <- must not be null
          * delete(), deleteById() <- delete를 하기 전에 해당 자료가 존재하는지 여부를 위한 select 쿼리가 돌아감
          */
+        // 관계 형성을 추가하고 나서 삭제후 조회시 constraint 오류 발생 -> 자식 엔터티 데이터 삭제 (실제 개발시 이렇게 하면 안됨!)
+        userHistoryRepository.deleteAll();
         userRepository.delete(userRepository.findById(1L).orElseThrow(RuntimeException::new));
         userRepository.findAll().forEach(System.out::println);
+
 
         userRepository.deleteById(2L);
         userRepository.findAll().forEach(System.out::println);
@@ -106,7 +111,7 @@ class UserRepositoryTest {
 
     @Test
     void flushTest1() {
-        userRepository.save(new User("new Minseo", "minseo@gmail.com"));
+        userRepository.save(new User("new Minseo", "newMinseo1@gmail.com"));
 
         userRepository.flush();
 
@@ -115,7 +120,7 @@ class UserRepositoryTest {
 
     @Test
     void flushTest2() {
-        userRepository.saveAndFlush(new User("new Minseo", "minseo@gmail.com"));
+        userRepository.saveAndFlush(new User("new Minseo", "newMinseo2@gmail.com"));
 
         userRepository.findAll().forEach(System.out::println);
     }

@@ -28,6 +28,7 @@ class BookReviewInfoRepositoryTest {
         //bookReviewInfo.setBookId(1L);
         bookReviewInfo.setAverageReviewScore(4.5f);
         bookReviewInfo.setReviewCount(2);
+        bookReviewInfo.setBook(givenBook());
 
         bookReviewInfoRepository.save(bookReviewInfo);
         System.out.println(">>>" + bookReviewInfoRepository.findAll());
