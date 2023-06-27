@@ -16,8 +16,11 @@ dependencies {
     implementation group: 'org.hibernate.orm', name: 'hibernate-core', version: '6.0.0.Alpha8'
 
     // https://mvnrepository.com/artifact/com.h2database/h2
+//    implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
     //runtimeOnly 'com.h2database:h2'
-    implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+
+// https://mvnrepository.com/artifact/org.postgresql/postgresql
+    implementation 'org.postgresql:postgresql:42.6.0'
 }
 
 test {
